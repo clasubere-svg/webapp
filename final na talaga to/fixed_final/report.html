@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://ijfjkvwvkunhkipchfep.supabase.co">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>CampusFinds — Report Item</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.html" class="logo">
+        <img src="images/Logo.png" alt="CampusFinds Logo">
+      </a>
+    </div>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a class="active" href="report.html">Report Item</a>
+      <a href="ai-matching.html">AI Matching</a>
+      <a href="listings.html">View Listings</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="btn login" onclick="openModal('loginModal')">Login</button>
+      <button class="btn signup" onclick="openModal('signupModal')">Signup</button>
+
+      <div class="profile-area" id="profileArea" style="display:none;">
+        <img id="navProfilePic" alt="Profile" style="cursor:pointer;border-radius:50%;width:38px;height:38px;object-fit:cover;border:2px solid #3b82f6" title="View Profile">
+        <button class="logout-btn" onclick="logoutUser()">Logout</button>
+      </div>
+    </div>
+  
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+    </header>
+
+  <!-- Report Card -->
+  <main class="page">
+    <section class="report-wrapper">
+      <form class="report-card" id="reportForm" enctype="multipart/form-data">
+        <h2 class="card-title">Report Item</h2>
+        <p class="card-sub">Report a lost or found item to help reunite it with its owner</p>
+        <div class="report-scope-hint">
+          <strong>Allowed items:</strong> electronics, wallets, keys, bags, books, ID cards, clothing, accessories, money/cash, and other small personal belongings lost or found on campus.
+          <br><strong>Not allowed:</strong> persons, vehicles, animals, real estate, food, or spam.
+        </div>
+
+        <!-- Item Type (toggle buttons) -->
+        <label class="field-label">Item Type <span class="required">*</span></label>
+        <div class="toggle-group">
+          <input type="radio" id="lost" name="item_type" value="lost" checked>
+          <label for="lost" class="toggle">Lost Item</label>
+          <input type="radio" id="found" name="item_type" value="found">
+          <label for="found" class="toggle">Found Item</label>
+        </div>
+
+        <!-- Two-column grid for inputs -->
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label">Item Name</label>
+            <input type="text" name="item_name" placeholder="e.g. Black Wallet">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Category <span class="required">*</span></label>
+            <select name="category" class="category-select">
+              <option value="" disabled selected>Select a category…</option>
+              <option value="Electronics">📱 Electronics</option>
+              <option value="Wallet">👛 Wallet / Purse</option>
+              <option value="Keys">🔑 Keys</option>
+              <option value="Books">📚 Books / Notebooks</option>
+              <option value="ID / Cards">🪪 ID / Cards</option>
+              <option value="Clothing">👕 Clothing</option>
+              <option value="Accessories">💍 Accessories / Jewelry</option>
+              <option value="Bag / Backpack">🎒 Bag / Backpack</option>
+              <option value="Umbrella">☂️ Umbrella</option>
+              <option value="Sports Equipment">⚽ Sports Equipment</option>
+              <option value="Others">📦 Others</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label class="field-label">Description</label>
+            <textarea name="description" rows="3" placeholder="Describe the item (color, brand, marks...)"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Date &amp; Time</label>
+            <input type="datetime-local" name="date_time">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Location (Where Lost/Found)</label>
+            <input type="text" name="location" placeholder="e.g. Library Level 2">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Your Name</label>
+            <input type="text" name="your_name" placeholder="Your full name">
+          </div>
+
+          <div class="field">
+            <label class="field-label">Contact Email <span class="required">*</span></label>
+            <input type="email" name="contact_email" placeholder="you@example.com" required>
+          </div>
+        </div>
+
+        <!-- Upload area -->
+        <label class="field-label">Upload Image</label>
+        <label class="upload-box" id="reportUploadBox">
+          <input type="file" id="reportImageInput" name="image" accept="image/*" onchange="handleReportImagePreview(this)">
+          <div class="upload-inner" id="reportUploadInner" style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div class="upload-icon" style="font-size:28px;opacity:0.5">+</div>
+            <div class="upload-text">Click to select an image</div>
+            <div style="font-size:12px;opacity:0.45">JPG, PNG, GIF — max 10MB</div>
+          </div>
+          <div id="reportUploadPreview" style="display:none;flex-direction:column;align-items:center;gap:10px;width:100%;padding:10px 0">
+            <img id="reportPreviewImg" src="" alt="Preview" style="max-width:100%;max-height:220px;border-radius:10px;object-fit:contain;border:1px solid rgba(255,255,255,0.1)">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;opacity:0.7">
+              <span id="reportPreviewName"></span>
+              <span style="opacity:0.5">|</span>
+              <span id="reportPreviewSize"></span>
+            </div>
+            <button type="button" onclick="removeReportImage(event)" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25);color:#f87171;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;">Remove Image</button>
+          </div>
+        </label>
+
+        <!-- Submit -->
+        <button type="submit" class="btn submit">Report Item</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- VALIDATION ERROR MODAL -->
+  <div id="validationOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:3000;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;">
+    <div style="background:#1a1f35;border:1px solid rgba(248,113,113,0.35);border-radius:18px;max-width:420px;width:100%;padding:32px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="width:52px;height:52px;border-radius:50%;background:rgba(248,113,113,0.15);border:2px solid rgba(248,113,113,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;">&#9888;</div>
+      <h3 style="color:#f87171;font-size:17px;font-weight:700;margin:0 0 12px;">Report Not Allowed</h3>
+      <p id="validationMsg" style="color:rgba(220,230,255,0.85);font-size:14px;line-height:1.6;margin:0 0 22px;white-space:pre-line;"></p>
+      <button onclick="document.getElementById('validationOverlay').style.display='none'" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;padding:11px 32px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;">Got it</button>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div class="modal" id="loginModal">
+    <div class="modal-box">
+      <span class="close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Login</h2>
+      <p class="modal-sub">Enter your email and password to access your account</p>
+      <div>
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="your.email@example.com">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password">
+        <button type="button" class="modal-btn" onclick="loginUser()">Login</button>
+      </div>
+      <p class="modal-link">
+        Don't have an account?
+        <a onclick="switchModal('loginModal','signupModal')">Signup here</a>
+      </p>
+    </div>
+  </div>
+
+    <!-- SIGNUP MODAL -->
+    <div class="modal" id="signupModal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2>Sign Up</h2>
+            <p class="modal-sub">Create a new account to get started</p>
+            <div>
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="Enter your name" required>
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="your.email@example.com" required>
+                <label>Phone Number</label>
+                <input type="tel" id="signupPhone" placeholder="e.g. 09123456789">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Create a password" required>
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+
+                <div class="profile-upload">
+                    <label for="profileInput" class="profile-circle">
+                        <img id="profilePreview" src="images/default-avatar.png" alt="Profile">
+                        <div class="upload-icon">+</div>
+                    </label>
+                    <input type="file" id="profileInput" accept="image/*">
+                    <p>Profile Picture</p>
+                </div>
+
+                <button type="button" class="modal-btn" onclick="signupUser()">Signup</button>
+            </div>
+            <p class="modal-link">
+                Already have an account?
+                <a onclick="switchModal('signupModal','loginModal')">Login here</a>
+            </p>
+        </div>
+    </div>
+
+  <script src="js/supabase.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/main.js" defer></script>
+
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-box" style="max-width:400px">
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+            <h2 style="text-align:center;margin-bottom:6px">My Profile</h2>
+            <div style="text-align:center;margin:16px 0">
+                <img id="profileModalPic" src="images/default-avatar.png" alt="Profile"
+                     style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #3b82f6">
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Full Name</p>
+                <p id="profileModalName" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Email</p>
+                <p id="profileModalEmail" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:16px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Phone Number</p>
+                <p id="profileModalPhone" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <hr style="border-color:rgba(255,255,255,0.1);margin-bottom:14px">
+            <p style="opacity:0.7;font-size:13px;margin-bottom:8px">Change Profile Picture</p>
+            <input type="file" id="profileChangePic" accept="image/*" style="margin-bottom:10px;font-size:13px">
+            <button id="changePicBtn" type="button" class="modal-btn" onclick="changeProfilePicture()">Save Photo</button>
+            <button type="button" class="modal-btn" onclick="logoutUser()" style="background:#ef4444;margin-top:8px">Logout</button>
+        </div>
+    </div>
+
+
+<script>
+function toggleNav(){
+  var btn = document.getElementById('hamburgerBtn');
+  var links = document.querySelector('.nav-links');
+  var actions = document.querySelector('.nav-actions');
+  btn.classList.toggle('open');
+  links.classList.toggle('open');
+  actions.classList.toggle('open');
+}
+</script>
+
+
+  <script>
+    function handleReportImagePreview(input) {
+      var file = input.files[0];
+      if (!file) return;
+      var inner   = document.getElementById('reportUploadInner');
+      var preview = document.getElementById('reportUploadPreview');
+      var img     = document.getElementById('reportPreviewImg');
+      var nameEl  = document.getElementById('reportPreviewName');
+      var sizeEl  = document.getElementById('reportPreviewSize');
+      var box     = document.getElementById('reportUploadBox');
+      var reader  = new FileReader();
+      reader.onload = function(e) {
+        img.src = e.target.result;
+        nameEl.textContent = file.name;
+        sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        inner.style.display = 'none';
+        preview.style.display = 'flex';
+        box.classList.add('upload-box--has-image');
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeReportImage(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var input   = document.getElementById('reportImageInput');
+      var inner   = document.getElementById('reportUploadInner');
+      var preview = document.getElementById('reportUploadPreview');
+      var box     = document.getElementById('reportUploadBox');
+      input.value = '';
+      preview.style.display = 'none';
+      inner.style.display = 'flex';
+      box.classList.remove('upload-box--has-image');
+    }
+  </script>
+</body>
+</html>
