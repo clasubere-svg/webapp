@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>CampusFinds | Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="logo">
+           <a href="index.html" class="logo">
+           <img src="images/Logo.png" alt="CampusFinds Logo">
+           </a>
+        </div>
+
+        <nav class="nav-links">
+            <a class="active" href="index.html">Home</a>
+            <a href="report.html">Report Item</a>
+            <a href="ai-matching.html">AI Matching</a>
+            <a href="listings.html">View Listings</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="btn login" onclick="openModal('loginModal')">Login</button>
+            <button class="btn signup" onclick="openModal('signupModal')">Signup</button>
+
+            <div class="profile-area" id="profileArea" style="display:none;">
+                <img id="navProfilePic" alt="Profile" style="cursor:pointer;border-radius:50%;width:38px;height:38px;object-fit:cover;border:2px solid #3b82f6" title="View Profile">
+                <button class="logout-btn" onclick="logoutUser()">Logout</button>
+            </div>
+        </div>
+    
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <span class="badge">✨ AI-Powered Lost &amp; Found System</span>
+
+        <h2>Lost Something?</h2>
+        <h3>We'll Help You Find IT!</h3>
+
+        <p>
+            CampusFinds connects our community to reunite lost items with their owners.
+            Report, search, and recover with the power of AI.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="report.html" class="btn action-btn report">📦 Report an Item</a>
+            <a href="listings.html" class="btn action-btn search">🔍 Search Items</a>
+            <a href="ai-matching.html" class="btn action-btn ai">✨ AI Matching</a>
+        </div>
+
+        <!-- Decorative Circles -->
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+        <div class="circle c3"></div>
+        <div class="circle c4"></div>
+        <div class="circle c5"></div>
+        <div class="circle c6"></div>
+        <div class="circle c7"></div>
+        <div class="circle c8"></div>
+        <div class="circle c9"></div>
+        <div class="circle c10"></div>
+    </section>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal" id="loginModal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Login</h2>
+            <p class="modal-sub">Enter your email and password to access your account</p>
+            <div>
+                <label>Email</label>
+                <input type="text" id="loginEmail" placeholder="your.email@example.com">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+                <button type="button" class="modal-btn" onclick="loginUser()">Login</button>
+            </div>
+            <p class="modal-link">
+                Don't have an account?
+                <a onclick="switchModal('loginModal','signupModal')">Signup here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL -->
+    <div class="modal" id="signupModal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2>Sign Up</h2>
+            <p class="modal-sub">Create a new account to get started</p>
+            <div>
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="Enter your name" required>
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="your.email@example.com" required>
+                <label>Phone Number</label>
+                <input type="tel" id="signupPhone" placeholder="e.g. 09123456789">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Create a password" required>
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+
+                <div class="profile-upload">
+                    <label for="profileInput" class="profile-circle">
+                        <img id="profilePreview" src="images/default-avatar.png" alt="Profile">
+                        <div class="upload-icon">+</div>
+                    </label>
+                    <input type="file" id="profileInput" accept="image/*">
+                    <p>Profile Picture</p>
+                </div>
+
+                <button type="button" class="modal-btn" onclick="signupUser()">Signup</button>
+            </div>
+            <p class="modal-link">
+                Already have an account?
+                <a onclick="switchModal('signupModal','loginModal')">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/supabase.js"></script>
+    <script src="js/auth.js"></script>
+
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-box" style="max-width:400px">
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+            <h2 style="text-align:center;margin-bottom:6px">My Profile</h2>
+            <div style="text-align:center;margin:16px 0">
+                <img id="profileModalPic" src="images/default-avatar.png" alt="Profile"
+                     style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #3b82f6">
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Full Name</p>
+                <p id="profileModalName" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Email</p>
+                <p id="profileModalEmail" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:16px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Phone Number</p>
+                <p id="profileModalPhone" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <hr style="border-color:rgba(255,255,255,0.1);margin-bottom:14px">
+            <p style="opacity:0.7;font-size:13px;margin-bottom:8px">Change Profile Picture</p>
+            <input type="file" id="profileChangePic" accept="image/*" style="margin-bottom:10px;font-size:13px">
+            <button id="changePicBtn" type="button" class="modal-btn" onclick="changeProfilePicture()">Save Photo</button>
+            <button type="button" class="modal-btn" onclick="logoutUser()" style="background:#ef4444;margin-top:8px">Logout</button>
+        </div>
+    </div>
+
+
+<script>
+function toggleNav(){
+  var btn = document.getElementById('hamburgerBtn');
+  var links = document.querySelector('.nav-links');
+  var actions = document.querySelector('.nav-actions');
+  btn.classList.toggle('open');
+  links.classList.toggle('open');
+  actions.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

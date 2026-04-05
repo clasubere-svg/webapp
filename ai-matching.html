@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CampusFinds | AI Matching</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar">
+    <div class="logo">
+        <a href="index.html" class="logo">
+            <img src="images/Logo.png" alt="CampusFinds Logo">
+        </a>
+    </div>
+
+    <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="report.html">Report Item</a>
+        <a class="active" href="ai-matching.html">AI Matching</a>
+        <a href="listings.html">View Listings</a>
+    </nav>
+
+    <div class="nav-actions">
+        <button class="btn login" onclick="openModal('loginModal')">Login</button>
+        <button class="btn signup" onclick="openModal('signupModal')">Signup</button>
+
+        <div class="profile-area" id="profileArea" style="display:none;">
+            <img id="navProfilePic" alt="Profile" style="cursor:pointer;border-radius:50%;width:38px;height:38px;object-fit:cover;border:2px solid #3b82f6" title="View Profile">
+            <button class="logout-btn" onclick="logoutUser()">Logout</button>
+        </div>
+    </div>
+
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </button>
+    </header>
+
+<!-- AI Matching Content -->
+<main class="page">
+    <section class="ai-wrapper">
+
+        <!-- Header Row -->
+        <div class="ai-header">
+            <h2>✨ AI Item Matching</h2>
+            <button class="ai-action-btn">✨ Find Matches</button>
+        </div>
+
+        <p class="ai-description">
+            Our AI analyzes lost and found items to find potential matches based on category,
+            description, location, and timing. Upload an image to use visual AI matching or
+            click "Find Matches" to discover items that might belong together.
+        </p>
+
+        <!-- Upload Card -->
+        <div class="ai-card" id="aiUploadCard">
+            <div class="ai-upload-icon" id="aiUploadIcon">⬇️</div>
+            <div class="ai-upload-text">
+                <h3>Visual AI Matching</h3>
+                <p>
+                    Upload a photo of your lost item and our AI will search for visually similar
+                    items in our database.
+                </p>
+                <label class="ai-upload-btn" id="aiUploadBtnLabel">
+                    &#11014; Upload Image
+                    <input type="file" id="aiImageInput" hidden accept="image/*" onchange="handleAiImagePreview(this)">
+                </label>
+            </div>
+        </div>
+        <!-- AI Image Preview -->
+        <div class="ai-image-preview" id="aiImagePreview" style="display:none;">
+            <img id="aiPreviewImg" src="" alt="Uploaded preview">
+            <div class="ai-preview-details">
+                <div class="ai-preview-badge">&#10003; Image Ready</div>
+                <div class="ai-preview-name" id="aiPreviewName"></div>
+                <div class="ai-preview-size" id="aiPreviewSize"></div>
+                <button type="button" class="ai-remove-btn" onclick="removeAiImage()">&#10005; Remove Image</button>
+            </div>
+        </div>
+
+        <div class="ai-results">
+            <h2>AI Match Results</h2>
+            <div id="matchContainer" class="match-grid"></div>
+        </div>
+
+    </section>
+</main>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        <h2>Login</h2>
+        <p class="modal-sub">Enter your email and password to access your account</p>
+        <div>
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="your.email@example.com">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password">
+            <button type="button" class="modal-btn" onclick="loginUser()">Login</button>
+        </div>
+        <p class="modal-link">
+            Don't have an account?
+            <a onclick="switchModal('loginModal','signupModal')">Signup here</a>
+        </p>
+    </div>
+</div>
+
+    <!-- SIGNUP MODAL -->
+    <div class="modal" id="signupModal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2>Sign Up</h2>
+            <p class="modal-sub">Create a new account to get started</p>
+            <div>
+                <label>Full Name</label>
+                <input type="text" id="signupName" placeholder="Enter your name" required>
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="your.email@example.com" required>
+                <label>Phone Number</label>
+                <input type="tel" id="signupPhone" placeholder="e.g. 09123456789">
+                <label>Password</label>
+                <input type="password" id="signupPassword" placeholder="Create a password" required>
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+
+                <div class="profile-upload">
+                    <label for="profileInput" class="profile-circle">
+                        <img id="profilePreview" src="images/default-avatar.png" alt="Profile">
+                        <div class="upload-icon">+</div>
+                    </label>
+                    <input type="file" id="profileInput" accept="image/*">
+                    <p>Profile Picture</p>
+                </div>
+
+                <button type="button" class="modal-btn" onclick="signupUser()">Signup</button>
+            </div>
+            <p class="modal-link">
+                Already have an account?
+                <a onclick="switchModal('signupModal','loginModal')">Login here</a>
+            </p>
+        </div>
+    </div>
+
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/matching.js"></script>
+
+
+    <!-- PROFILE MODAL -->
+    <div class="modal" id="profileModal">
+        <div class="modal-box" style="max-width:400px">
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+            <h2 style="text-align:center;margin-bottom:6px">My Profile</h2>
+            <div style="text-align:center;margin:16px 0">
+                <img id="profileModalPic" src="images/default-avatar.png" alt="Profile"
+                     style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #3b82f6">
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Full Name</p>
+                <p id="profileModalName" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:10px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Email</p>
+                <p id="profileModalEmail" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <div style="margin-bottom:16px">
+                <p style="opacity:0.6;font-size:12px;margin-bottom:2px">Phone Number</p>
+                <p id="profileModalPhone" style="font-weight:600;font-size:15px"></p>
+            </div>
+            <hr style="border-color:rgba(255,255,255,0.1);margin-bottom:14px">
+            <p style="opacity:0.7;font-size:13px;margin-bottom:8px">Change Profile Picture</p>
+            <input type="file" id="profileChangePic" accept="image/*" style="margin-bottom:10px;font-size:13px">
+            <button id="changePicBtn" type="button" class="modal-btn" onclick="changeProfilePicture()">Save Photo</button>
+            <button type="button" class="modal-btn" onclick="logoutUser()" style="background:#ef4444;margin-top:8px">Logout</button>
+        </div>
+    </div>
+
+
+<script>
+function toggleNav(){
+  var btn = document.getElementById('hamburgerBtn');
+  var links = document.querySelector('.nav-links');
+  var actions = document.querySelector('.nav-actions');
+  btn.classList.toggle('open');
+  links.classList.toggle('open');
+  actions.classList.toggle('open');
+}
+</script>
+
+
+  <script>
+    function handleAiImagePreview(input) {
+      var file = input.files[0];
+      if (!file) return;
+      var preview  = document.getElementById('aiImagePreview');
+      var img      = document.getElementById('aiPreviewImg');
+      var nameEl   = document.getElementById('aiPreviewName');
+      var sizeEl   = document.getElementById('aiPreviewSize');
+      var card     = document.getElementById('aiUploadCard');
+      var reader   = new FileReader();
+      reader.onload = function(e) {
+        img.src = e.target.result;
+        nameEl.textContent = file.name;
+        sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        preview.style.display = 'flex';
+        card.classList.add('ai-card--has-image');
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeAiImage() {
+      var input   = document.getElementById('aiImageInput');
+      var preview = document.getElementById('aiImagePreview');
+      var card    = document.getElementById('aiUploadCard');
+      input.value = '';
+      preview.style.display = 'none';
+      card.classList.remove('ai-card--has-image');
+    }
+  </script>
+</body>
+</html>
